@@ -24,11 +24,7 @@ def chat(reciever_id):
   db = get()
   cur = db.cursor()
   
-  if request.method == "GET":
-    cur.execute("SELECT * FROM chats WHERE (user_id=? AND reciever_id=?) OR (user_id=? AND  reciever_id=?)",(user_id,reciever_id,reciever_id,user_id))
-    chats = cur.fetchall()
-    db.close()
-    return render_template("chat.html",chats=chats,user_id=user_id,reciever_id=reciever_id)
+    
   if request.method == "POST":
     clicked_button = request.form.get("button")
     if clicked_button == "exit":
@@ -40,3 +36,8 @@ def chat(reciever_id):
       db.commit()
       db.close()
       return redirect(url_for("chat.chat",reciever_id=reciever_id))
+  else:
+    cur.execute("SELECT * FROM chats WHERE (user_id=? AND reciever_id=?) OR (user_id=? AND  reciever_id=?)",(user_id,reciever_id,reciever_id,user_id))
+    chats = cur.fetchall()
+    db.close()
+    return render_template("chat.html",chats=chats,user_id=user_id,reciever_id=reciever_id)
