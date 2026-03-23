@@ -145,9 +145,9 @@
     <!-- HEADER -->
     <div class="header">
         <h2>💬 Chat</h2>
-        <form action="{{ url_for('chat.chat',reciever_id=reciever_id) }}" method="post">
-            <button type="submit" name="button" value="exit">Exit🚪</button>
-        </form>
+        <a href="{{ url_for('contacts.contacts') }}">
+            <button>Exit🚪</button>
+        </a>
     </div>
 
     <!-- CHAT MESSAGES -->
@@ -175,15 +175,9 @@
 
     <!-- MESSAGE INPUT -->
     <div class="navbar">
-        <form action="{{ url_for('chat.chat',reciever_id=reciever_id) }}" method="post">
-            <input type="text" 
-                   name="post" 
-                   placeholder="Type your message..." 
-                   required>
-            <button type="button" name="button" value="send" onclick="sendMessage()">➤</button>
-        </form>
+        <input type="text" id="msg" placeholder="Type your message...">
+        <button onclick="sendMessage()">➤</button>
     </div>
-
 </div>
 
 <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
@@ -199,7 +193,7 @@
     
     // send message
     function sendMessage() {
-        let input = document.querySelector("input[name='post']");
+        let input = document.querySelector("#msg");
         let msg = input.value;
     
         if (msg === "") return;
@@ -226,7 +220,15 @@
     // UI
     function addMessage(sender, msg) {
         let div = document.createElement("div");
-        div.innerText = sender + ": " + msg;
+    
+        if (sender === "You") {
+            div.className = "sender_chat";
+        } else {
+            div.className = "receiver_chat";
+        }
+    
+        div.innerText = msg;
+    
         document.querySelector(".chat_box").appendChild(div);
     }
 </script>
