@@ -27,34 +27,44 @@ def contacts():
     user_id  = session.get("user_id")
     cur.execute("SELECT *  FROM contacts WHERE user_id=?",(user_id,))
     contacts = cur.fetchall()
+    db.close()
     return render_template("contacts.html",contacts=contacts)
+    
   if request.method == 'POST':
     reciever_phone = request.form.get("phone")
     cur.execute("SELECT id FROM users WHERE phone=?",(reciever_phone,))
     row = cur.fetchone()
+    
+    if row is None:
+      db.close()
+      return "User does not exist in app"
+    
     reciever_id = row[0]
     print(f"reciever_id:{reciever_id}")
-    if reciever_id:
-      return redirect(url_for("chat.chat",reciever_id=reciever_id))
-    else:
-      return "go you hacker!!!!"
+    db.close()
+    return redirect(url_for("chat.chat",reciever_id=reciever_id))
    
 @contacts_bp.route("/add_contact",methods=["GET","POST"])
 def add_contact():
   db = get()
   cur = db.cursor()
   if request.method == "GET":
+    db.close()
     return render_template("add_contact.html")
+    
   if request.method == "POST":
     name = request.form.get("name")
     phone = request.form.get("phone")
     user_id = session.get("user_id")
     cur.execute("SELECT *  FROM users WHERE phone=?",(phone,))
     reciever = cur.fetchone()
+    
     if reciever:
       cur.execute("INSERT INTO contacts(user_id,name,phone) VALUES(?,?,?)",(user_id,name,phone))
+      db.commit()
     else:
+      db.close()
       return "the person does not exist in app"
-    db.commit()
+      
     db.close()
     return redirect(url_for("contacts.contacts"))
