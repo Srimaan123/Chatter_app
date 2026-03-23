@@ -180,11 +180,55 @@
                    name="post" 
                    placeholder="Type your message..." 
                    required>
-            <button type="submit" name="button" value="send">➤</button>
+            <button type="button" name="button" value="send" onclick="sendMessage()">➤</button>
         </form>
     </div>
 
 </div>
 
+<script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+
+<script>
+    const socket = io();
+    
+    // join room
+    socket.emit("join_chat", {
+        user_id: {{ user_id }},
+        reciever_id: {{ reciever_id }}
+    });
+    
+    // send message
+    function sendMessage() {
+        let input = document.querySelector("input[name='post']");
+        let msg = input.value;
+    
+        if (msg === "") return;
+    
+        // show instantly
+        addMessage("You", msg);
+    
+        socket.emit("send_message", {
+            user_id: {{ user_id }},
+            reciever_id: {{ reciever_id }},
+            message: msg
+        });
+    
+        input.value = "";
+    }
+    
+    // receive message
+    socket.on("receive_message", function(data) {
+        if (data.user_id == {{ user_id }}) return;
+    
+        addMessage("Other", data.message);
+    });
+    
+    // UI
+    function addMessage(sender, msg) {
+        let div = document.createElement("div");
+        div.innerText = sender + ": " + msg;
+        document.querySelector(".chat_box").appendChild(div);
+    }
+</script>
 </body>
 </html>
