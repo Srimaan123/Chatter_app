@@ -21,8 +21,6 @@ db.close()
 def login():
   db = get()
   cur = db.cursor()
-  if request.method == "GET":
-    return render_template("login.html")
   if request.method == "POST":
     username = request.form.get("username")
     password = request.form.get("password")
@@ -36,14 +34,13 @@ def login():
     single_user = user[0]
     session["user_id"] = single_user[0]
     return redirect(url_for("contacts.contacts"))
-    
+  else:
+    return render_template("login.html")
             
 @auth_bp.route("/add_account",methods=["GET","POST"])
 def add_account():
   db = get()
   cur = db.cursor()
-  if request.method == "GET":
-    return render_template("add_account.html")
   if request.method == "POST":
     username = request.form.get("username")
     password = request.form.get("password")
@@ -52,3 +49,5 @@ def add_account():
     db.commit()
     db.close()
     return redirect(url_for("auth.login"))
+  else:
+    return render_template("add_account.html")
