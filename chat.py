@@ -24,6 +24,7 @@ db.close()
 @chat_bp.route("/chat/<int:reciever_id>",methods = ["GET","POST"])
 def chat(reciever_id):
   user_id = session.get("user_id")
+  print(user_id) 
   db = get()
   cur = db.cursor()
   
