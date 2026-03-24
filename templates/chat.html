@@ -145,9 +145,7 @@
     <!-- HEADER -->
     <div class="header">
         <h2>💬 Chat</h2>
-        <a href="{{ url_for('contacts.contacts') }}">
-            <button>Exit🚪</button>
-        </a>
+        <button onclick="exitChat()">Exit🚪</button>
     </div>
 
     <!-- CHAT MESSAGES -->
@@ -230,6 +228,10 @@
         div.innerText = msg;
     
         document.querySelector(".chat_box").appendChild(div);
+    }
+    function exitChat(){
+        socket.disconnect();
+        window.location.href = "{{ url_for('contacts.contacts')}}";
     }
 </script>
 </body>
