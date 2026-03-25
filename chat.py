@@ -8,21 +8,23 @@ chat_bp = Blueprint("chat",__name__)
 
 def get():
   return sqlite3.connect("data.db")
-  
-db = get()
-cur = db.cursor()
-cur.execute("""
-CREATE TABLE IF NOT EXISTS chats(
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  user_id INTEGER,
-  reciever_id INTEGER,
-  post TEXT
-)""")
-db.commit()
-db.close()
-  
+
+def init_db():
+  db = get()
+  cur = db.cursor()
+  cur.execute("""
+  CREATE TABLE IF NOT EXISTS chats(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER,
+    reciever_id INTEGER,
+    post TEXT
+  )""")
+  db.commit()
+  db.close()
+
 @chat_bp.route("/chat/<int:reciever_id>",methods = ["GET","POST"])
 def chat(reciever_id):
+  init_db()
   user_id = session.get("user_id")
   print(user_id) 
   db = get()
