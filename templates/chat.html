@@ -213,6 +213,12 @@
         if (data.user_id == {{ user_id }}) return;
     
         addMessage("Other", data.message);
+        
+        if(Notification.permission == "granted"){
+            new Notification("New Message Arrived", {
+                body: data.message
+            })
+        }
     });
     
     // UI
@@ -228,10 +234,19 @@
         div.innerText = msg;
     
         document.querySelector(".chat_box").appendChild(div);
+        document.querySelector(".chat_box").scrollTop = document.querySelector(".chat_box").scrollHeight;
+        
     }
     function exitChat(){
         socket.disconnect();
         window.location.href = "{{ url_for('contacts.contacts')}}";
+    }
+    window.onload = ()=>{
+        box = document.querySelector(".chat_box");
+        box.scrollTop = box.scrollHeight;
+    }
+    if(Notification.permission!=="granted"){
+        Notification.requestPermission()
     }
 </script>
 </body>
