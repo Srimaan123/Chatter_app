@@ -2,7 +2,7 @@ from flask import Flask,render_template,redirect,url_for,Blueprint,request,sessi
 import sqlite3
 from flask_socketio import SocketIO, join_room, emit
 
-socketio = SocketIO()
+socketio = SocketIO(async_mode="threading")
 
 chat_bp = Blueprint("chat",__name__)
 
@@ -46,8 +46,7 @@ def join_chat(data):
     join_room(room)
 
     print("Joined room:", room)
-
-
+    
 # 🔹 send message
 @socketio.on("send_message")
 def handle_message(data):
@@ -69,3 +68,6 @@ def handle_message(data):
     room = f"{min(user_id, reciever_id)}_{max(user_id, reciever_id)}"
 
     emit("receive_message", data, room=room)
+    emit("message_notification",{
+        "sender_id": user_id
+    },room=f"user_{reciever_id}")
