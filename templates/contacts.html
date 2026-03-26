@@ -139,7 +139,11 @@
             transform: scale(1.1) rotate(90deg);
             box-shadow: 0 18px 35px rgba(0, 0, 0, 0.45);
         }
-    </style>
+        .unread::after{
+            content: " ●";
+            color: lime;
+        }
+        </style>
 </head>
 
 <body>
@@ -174,14 +178,33 @@
     <a href="{{ url_for('contacts.add_contact') }}" class="fab" title="Add Contact">
         +
     </a>
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
     <script>
         let allForms = document.querySelectorAll("form");
         
         allForms.forEach(form=>{
             form.querySelector(".contact").addEventListener("click",()=>{
                 form.submit();
+                
             })
-        })
+        });
+        allForms.forEach(form=>{
+            let div = form.querySelector(".contact");
+            form.querySelector(".contact").addEventListener("click",()=>{
+                div.classList.remove("unread");
+                form.submit()
+                })
+        });
+        const socket = io();
+        socket.on("message_notification",function(data){
+            let sender = data.sender_id;
+            
+            let contact = document.getElementById("user-"+sender);
+            
+            if (contact) {
+                contact.classList.add("unread");
+            }
+        });
     </script>
 </body>
 </html>
